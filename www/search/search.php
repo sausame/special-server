@@ -12,7 +12,7 @@ if (empty($content)) {
 	die('NO content');
 }
 
-$config = parse_ini_file('../config.ini');
+$config = parse_ini_file('../../config.ini');
 
 $configFile = $config['searcher-config-path'];
 $scriptFile = $config['searcher-script-path'];
