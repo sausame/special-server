@@ -19,7 +19,7 @@ $scriptFile = $config['searcher-script-path'];
 
 $tempFile = tempnam(sys_get_temp_dir(), 'search-result-');
 
-$cmd = 'bash ' . $scriptFile . ' ' . $configFile . ' "' . $content . '" ' . $tempFile;
+$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' "' . $content . '" ' . $tempFile;
 
 $output = system($cmd, $retval);
 
