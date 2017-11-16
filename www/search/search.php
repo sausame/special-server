@@ -8,9 +8,13 @@ if (! empty($_POST)) {
 	die('NO content');
 }
 
+$content = trim($content);
+
 if (empty($content)) {
 	die('NO content');
 }
+
+$content = urlencode($content);
 
 $config = parse_ini_file('../../config.ini');
 
