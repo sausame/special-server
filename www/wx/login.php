@@ -17,7 +17,7 @@ $qrPath = $pathPrefix . '-qr.png';
 
 $cmd = '/bin/bash ' . $scriptFile . ' ' . $uuidPath . ' ' . $qrPath;
 
-echo('<h2>Log</h2><pre>');
+echo('<h2>' . date('Y-m-d H:i:s') . '</h2><pre>');
 $output = system($cmd, $retval);
 echo('</pre>');
 
@@ -33,6 +33,7 @@ if (0 === $retval) {
 		  <input type="hidden" name="uuid" value="<?php echo file_get_contents($uuidPath); ?>">
 		  <input type="submit" value="Please press button after scan QR code." />
 		</form>
+		<h2>Refresh the page</h2><br/>
 <?php
 
 	}
@@ -40,9 +41,6 @@ if (0 === $retval) {
 
 ?>
 		<h2>Unable to get QR code (error #<?php echo($retval); ?>), please refresh the page.</h2><br/>
-		<form id="refresh" name="refreshForm" method="POST" action="<?php echo(basename(__FILE__)); ?>" >
-		  <input type="submit" value="Refresh" />
-		</form>
 <?php
 }
 
@@ -50,6 +48,10 @@ unlink($qrPath);
 unlink($uuidPath);
 
 ?>
+
+	<form id="refresh" name="refreshForm" method="POST" action="<?php echo(basename(__FILE__)); ?>" >
+	  <input type="submit" value="Refresh" />
+	</form>
 </body>
 </html>
 
