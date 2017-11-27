@@ -213,7 +213,7 @@ class SearchManager
 		if (0 === $this->errorCode) {
 			return $this->result;
 		} else {
-			return '{"error" : {"code": ' . $this->errorCode . ', "message": "' . $this->getErrorResult() .'"}}';
+			return '{"num": 0, "error" : {"code": ' . $this->errorCode . ', "message": "' . $this->getErrorResult() .'"}}';
 		}
 	}
 
