@@ -45,10 +45,12 @@ if (NULL != $fp) {
 
 	fseek($fp, $offset, SEEK_SET);
 
-	$buff = fread($fp, ($size - $offset));
-	$buff = base64_encode($buff);
+	if ($size > $offset) {
+		$buff = fread($fp, ($size - $offset));
+		$buff = base64_encode($buff);
 
-	echo($buff);
+		echo($buff);
+	}
 
 	@fclose($fp);
 
