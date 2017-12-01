@@ -1,8 +1,7 @@
 <?php
 
-function viewFile($path) {
+function viewFile($base64Path) {
 
-	$file = base64_encode($path);
 	$name = "live" . time();
 ?>
 <div>
@@ -65,7 +64,7 @@ function viewFile($path) {
 		}
 
 		var name = "<?php echo($name); ?>";
-		var path = "<?php echo($file); ?>";
+		var path = "<?php echo($base64Path); ?>";
 		var offset = 0;
 
 		setInterval(getData, 10000);
