@@ -16,18 +16,25 @@ if (! empty($_POST)) {
 
 $config = parse_ini_file('../../config.ini');
 
+$pathPrefix = tempnam(sys_get_temp_dir(), 'wx-');
+$logPath = $pathPrefix . '.log';
+
 $configFile = $config['wx-config-path'];
 $scriptFile = $config['wx-helper-script-path'];
 
 // TODO: Configs and log should be different.
-$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $uuid . '> /dev/null &';
+$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $uuid . ' ' . $logPath . '> /dev/null &';
 system($cmd);
 
+$logPath = base64_encode($logPath);
 ?>
   <h2>If it quits, please re-login.</h2>
   <form id="refresh" name="refreshForm" method="POST" action="login.php" >
     <input type="submit" value="Refresh" />
   </form>
+  <h2>Log</h2>
+  <iframe width="100%" height="100%" src="../utils/fileviewer.php?file=<?php echo($logPath); ?>" frameborder="0" allowfullscreen>
+  </iframe>
 </body>
 </html>
 
