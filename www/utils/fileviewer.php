@@ -1,23 +1,17 @@
 <?php
 
-function viewFile($name, $path) {
+function viewFile($path) {
 
 	$file = base64_encode($path);
-
+	$name = "live" . time();
 ?>
-<!doctype html>
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; CHARSET=utf-8" />
-	<title><?php echo($name); ?></title>
-</head>
-<body>
+<div>
 	<p>
 		<button onclick="clearData()" id='clearBtn'>Clear</button>
 		<button onclick="reloadData()" id='reloadBtn'>Reload</button>
 	</p>
 	<hr/>
-		<pre id='live'></pre>
+		<pre id='<?php echo($name); ?>'></pre>
 	<hr/>
 	<p>
 		<button onclick="clearData()" id='clearBtn'>Clear</button>
@@ -42,7 +36,7 @@ function viewFile($name, $path) {
 						var data = base64js.toByteArray(res['data']);
 						data = new TextDecoder('utf-8').decode(data);
 
-						document.getElementById('live').innerHTML = document.getElementById('live').innerHTML
+						document.getElementById(name).innerHTML = document.getElementById(name).innerHTML
 							+ data; // Update
 
 						offset = res['offset'];
@@ -59,7 +53,7 @@ function viewFile($name, $path) {
 		}
 
 		function clearData() {
-			document.getElementById('live').innerHTML = '';
+			document.getElementById(name).innerHTML = '';
 		}
 
 		function reloadData() {
@@ -70,6 +64,7 @@ function viewFile($name, $path) {
 			getData();
 		}
 
+		var name = "<?php echo($name); ?>";
 		var path = "<?php echo($file); ?>";
 		var offset = 0;
 
@@ -79,8 +74,7 @@ function viewFile($name, $path) {
 
 	</script>
 
-</body>
-</html>
+</div>
 
 <?php
 }
