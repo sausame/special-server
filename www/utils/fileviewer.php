@@ -2,6 +2,8 @@
 
 function viewFile($name, $path) {
 
+	$file = base64_encode($path);
+
 ?>
 <!doctype html>
 <html>
@@ -10,51 +12,73 @@ function viewFile($name, $path) {
 	<title><?php echo($name); ?></title>
 </head>
 <body>
-<pre id='live'></pre>
-<script src="base64js.min.js"></script>
-<script>
-<?php
-	$file = base64_encode($path);
-	echo('var path = "' . $file . '"');
-	$data = '"file=' . $file . '&offset=" + offset';
-?>
+	<p>
+		<button onclick="clearData()" id='clearBtn'>Clear</button>
+		<button onclick="reloadData()" id='reloadBtn'>Reload</button>
+	</p>
+	<hr/>
+		<pre id='live'></pre>
+	<hr/>
+	<p>
+		<button onclick="clearData()" id='clearBtn'>Clear</button>
+		<button onclick="reloadData()" id='reloadBtn'>Reload</button>
+	</p>
+	<script src="base64js.min.js"></script>
+	<script>
 
-function getData() {
+		function getData() {
 
-	var xhr = new XMLHttpRequest();
+			var xhr = new XMLHttpRequest();
 
-	xhr.onload = function() {
+			xhr.onload = function() {
 
-		if (200 === xhr.status) {
+				if (200 === xhr.status) {
 
-			res = JSON.parse(xhr.responseText);
-			error = res['error'];
+					res = JSON.parse(xhr.responseText);
+					error = res['error'];
 
-			if (0 === error['code']) {
+					if (0 === error['code']) {
 
-				var data = base64js.toByteArray(res['data']);
-				data = new TextDecoder('utf-8').decode(data);
+						var data = base64js.toByteArray(res['data']);
+						data = new TextDecoder('utf-8').decode(data);
 
-				document.getElementById('live').innerHTML = document.getElementById('live').innerHTML
-				   	+ data; // Update
+						document.getElementById('live').innerHTML = document.getElementById('live').innerHTML
+							+ data; // Update
 
-				offset = res['offset'];
+						offset = res['offset'];
 
-			} else {
-				console.log(error);
-			}
+					} else {
+						console.log(error);
+					}
+				}
+			};
+
+			xhr.open('POST', 'filecontent.php', true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			xhr.send('file=' + path + '&offset=' + offset);
 		}
-	};
 
-	xhr.open('POST', 'filecontent.php', true);
-	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	xhr.send(<?php echo($data); ?>);
-}
+		function clearData() {
+			document.getElementById('live').innerHTML = '';
+		}
 
-var offset = 0;
-setInterval(getData, 10000);
-window.onload = getData(); 
-</script> 
+		function reloadData() {
+
+			offset = 0;
+
+			clearData();
+			getData();
+		}
+
+		var path = "<?php echo($file); ?>";
+		var offset = 0;
+
+		setInterval(getData, 10000);
+
+		window.onload = getData();
+
+	</script>
+
 </body>
 </html>
 
