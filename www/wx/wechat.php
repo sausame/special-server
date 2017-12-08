@@ -20,10 +20,11 @@ $pathPrefix = tempnam(sys_get_temp_dir(), 'wx-');
 $logPath = $pathPrefix . '.log';
 
 $configFile = $config['wx-config-path'];
+$shareScriptFile = $config['wx-share-config-path'];
 $scriptFile = $config['wx-helper-script-path'];
 
 // TODO: Configs and log should be different.
-$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $uuid . ' ' . $logPath . '> /dev/null &';
+$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $shareScriptFile . ' ' . $uuid . ' ' . $logPath . '> /dev/null &';
 system($cmd);
 
 $logPath = base64_encode($logPath);
