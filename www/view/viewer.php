@@ -25,7 +25,7 @@ unlink($saveFile);
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Swiper demo</title>
+  <title>京东实时特价</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Link Swiper's CSS -->
   <link rel="stylesheet" href="../dist/css/swiper.min.css">
@@ -131,7 +131,7 @@ unlink($saveFile);
       <div class="swiper-slide">
         <div style="min-width: 80%">
           <textarea id="<?php echo($name); ?>" class="plate-textarea" rows="12" readonly><?php echo($data->plate); ?></textarea>
-          <button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#<?php echo($name); ?>">Copy Text</button>
+          <button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#<?php echo($name); ?>">复制文本</button>
           <hr/>
           <img src="<?php echo($data->image); ?>"/>
         </div>
