@@ -8,26 +8,47 @@
 <body>
 <?php
 	require('db.php');
-	session_start();
-    // If form submitted, insert values into the database.
-    if (isset($_POST['username'])){
-		
+
+	if (isset($_COOKIE['ID_your_site'])) { //if there is, it logs you in and directes you to the members page
+
+		$username = $_COOKIE['ID_your_site'];
+		$password = $_COOKIE['Key_your_site'];
+
+		$query = "SELECT * FROM `users` WHERE username = '$username' and password = '$password'";
+		$result = mysqli_query($con, $query) or die(mysql_error());
+		$rows = mysqli_num_rows($result);
+		if(0 == $rows) {
+			header("Location: login.php");
+			exit();
+		}
+		header("Location: index.php"); // Redirect user to index.php
+		exit();
+	}
+
+	// If form submitted, query values from the database.
+	if (isset($_POST['username'])){
+
 		$username = stripslashes($_REQUEST['username']); // removes backslashes
 		$username = mysqli_real_escape_string($con,$username); //escapes special characters in a string
 		$password = stripslashes($_REQUEST['password']);
 		$password = mysqli_real_escape_string($con,$password);
-		
-	//Checking is user existing in the database or not
-        $query = "SELECT * FROM `users` WHERE username='$username' and password='".md5($password)."'";
+		$password = md5($password);
+
+		// Checking is user existing in the database or not
+		$query = "SELECT * FROM `users` WHERE username = '$username' and password = '$password'";
 		$result = mysqli_query($con,$query) or die(mysql_error());
 		$rows = mysqli_num_rows($result);
-        if($rows==1){
-			$_SESSION['username'] = $username;
+
+		if ($rows == 1) {
+			$hour = time() + (7 * 24 * 3600); // A week
+			setcookie('ID_your_site', $username, $hour, '/');
+			setcookie('Key_your_site', $password, $hour, '/');
 			header("Location: index.php"); // Redirect user to index.php
-            }else{
-				echo "<div class='form'><h3>Username/password is incorrect.</h3><br/>Click here to <a href='login.php'>Login</a></div>";
-				}
-    }else{
+		} else {
+			echo "<div class='form'><h3>Username/password is incorrect.</h3><br/>Click here to <a href='login.php'>Login</a></div>";
+		}
+
+	} else {
 ?>
 <div class="form">
 <h1>Log In</h1>

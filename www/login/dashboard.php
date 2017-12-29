@@ -1,6 +1,5 @@
 <?php
 include("auth.php"); //include auth.php file on all secure pages
-require('db.php');
 ?>
 <!DOCTYPE html>
 <html>
