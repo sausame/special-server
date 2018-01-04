@@ -2,26 +2,24 @@
 
 include("auth.php"); //include auth.php file on all secure pages
 
-$config = parse_ini_file('../../config.ini');
+session_start();
 
-$pathPrefix = tempnam(sys_get_temp_dir(), 'viewer-result-');
-$saveFile = $pathPrefix . '.json';
-
-$configFile = $config['viewer-config-path'];
-$shareScriptFile = $config['viewer-share-config-path'];
-$scriptFile = $config['viewer-script-path'];
-
-$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $shareScriptFile . ' ' . $saveFile;
-
-$output = system($cmd, $retval);
-
-if (0 === $retval) {
-	$result = file_get_contents($saveFile);
-} else {
-	die('NO result');
+if (isset($_SESSION['shareFile'])) {
+	unlink($_SESSION['shareFile']);
 }
 
-unlink($saveFile);
+$config = parse_ini_file('../../config.ini');
+
+$pathPrefix = tempnam(sys_get_temp_dir(), 'viewer-share-');
+$saveFile = $pathPrefix . '.json';
+
+$shareUrl = $config['viewer-share-url'];
+
+file_put_contents($saveFile, fopen($shareUrl, 'r'));
+
+$_SESSION['shareFile'] = $saveFile;
+
+$result = file_get_contents($saveFile);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,7 +72,6 @@ unlink($saveFile);
       padding: 5px;
       min-width: 100%;
       font-family: Tahoma, sans-serif;
-      background-image: url(bg.gif);
       background-position: bottom right;
       background-repeat: no-repeat;
     }
@@ -125,18 +122,12 @@ unlink($saveFile);
     <div class="swiper-wrapper">
 <?php
 	$user = json_decode($result);
-	$count = 0;
-	foreach($user->list as $data) {
-		$count ++;
-		$name = 'bar' . $count;
+	$num = $user->num;
+	for ($index = 0; $index < $num; $index ++) {
+		$divName = 'div' . $index;
 ?>
       <div class="swiper-slide">
-        <div style="min-width: 80%">
-          <textarea id="<?php echo($name); ?>" class="plate-textarea" rows="12" readonly><?php echo($data->plate); ?></textarea>
-          <button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#<?php echo($name); ?>">复制文本</button>
-          <hr/>
-          <img src="<?php echo($data->image); ?>"/>
-        </div>
+        <div id="<?php echo($divName); ?>" style="min-width: 80%">正在更新，请稍候……</div>
       </div>
 <?php
 	}
@@ -156,6 +147,52 @@ unlink($saveFile);
 
   <!-- Initialize Swiper -->
   <script>
+
+    function getData(index) {
+
+      switch(statuses[index]) {
+      case 0:
+        statuses[index] = 1; // Updating
+        console.log('' + index + ' is updating ...');
+        break;
+      case 1:
+      case 2:
+      default:
+        return;
+      }
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.onload = function() {
+
+        if (200 === xhr.status) {
+
+          statuses[index] = 2; // Updated
+
+          console.log('' + index + ' is updated.');
+
+          res = JSON.parse(xhr.responseText);
+          error = res['error'];
+
+          if (0 === error['code']) {
+
+            var data = res['data'];
+            var plate = data['plate'];
+            var image = data['image'];
+
+            document.getElementById('div' + index).innerHTML = '<textarea id="bar' + index + '" class="plate-textarea" rows="12" readonly>' + plate + '</textarea>\n<button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#bar' + index + '">复制文本</button>\n<hr/>\n<img src="' + image + '"/>';
+
+          } else {
+            console.log(error);
+          }
+        }
+      };
+
+      xhr.open('POST', 'special.php', true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.send('index=' + index);
+    }
+
     var swiper = new Swiper('.swiper-container', {
       pagination: {
         el: '.swiper-pagination',
@@ -167,15 +204,27 @@ unlink($saveFile);
       },
     });
 
+    swiper.on('slideChange', function () {
+      getData(swiper.realIndex);
+    });
+
     var clipboard = new Clipboard('.btn');
 
     clipboard.on('success', function(e) {
-        console.log(e);
+      console.log(e);
     });
 
     clipboard.on('error', function(e) {
-        console.log(e);
+      console.log(e);
     });
+
+    var statuses = [];
+    var num = <?php echo($num); ?>;
+    for (i = 0; i < num; i ++) {
+      statuses[i] = 0; // Initialization
+    }
+
+    window.onload = getData(0);
 
   </script>
 </body>
