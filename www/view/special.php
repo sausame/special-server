@@ -5,13 +5,14 @@ do {
 
 	$result = NULL;
 
-	if (! isset($_SESSION['shareFile'])) {
+	if (! isset($_SESSION['userConfigFile']) or ! isset($_SESSION['shareFile'])) {
 		$code = 101;
 		$message = 'No login';
 		break;
 	}
 
 	$shareFile = $_SESSION['shareFile'];
+	$userConfigFile = $_SESSION['userConfigFile'];
 
 	if (! empty($_POST)) {
 		$index = $_POST['index'];
@@ -29,10 +30,9 @@ do {
 	$saveFile = $pathPrefix . '.json';
 
 	$configFile = $config['viewer-config-path'];
-	$shareScriptFile = $config['viewer-share-config-path'];
 	$scriptFile = $config['viewer-script-path'];
 
-	$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $shareScriptFile . ' ' . $shareFile . ' ' . $index . ' ' . $saveFile;
+	$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $userConfigFile . ' ' . $shareFile . ' ' . $index . ' ' . $saveFile;
 
 	$output = system($cmd, $retval);
 
