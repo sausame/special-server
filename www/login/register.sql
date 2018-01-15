@@ -42,12 +42,15 @@ CREATE TABLE IF NOT EXISTS `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 CREATE TABLE `configs` (
- `id` int(11) NOT NULL AUTO_INCREMENT,
- `userId` int(11) NOT NULL,
- `config` tinytext,
- `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
- `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
- PRIMARY KEY (`id`),
- UNIQUE KEY `userId` (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 ;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `config` text,
+  `entryCookies` text,
+  `keyCookies` text,
+  `loginType` int(11) NOT NULL,
+  `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userId` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
