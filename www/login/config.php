@@ -5,7 +5,7 @@ $insertFlag = false;
 $configId = NULL;
 $userConfig = NULL;
 
-$query = "SELECT id, config, updateTime FROM `configs` WHERE userId = '$userId'";
+$query = "SELECT id, config, loginType, updateTime FROM `configs` WHERE userId = '$userId'";
 $result = mysqli_query($con, $query) or die(mysql_error());
 $row = mysqli_fetch_row($result);
 
@@ -18,6 +18,7 @@ $uuid = '';
 $username = '';
 $currentPassword = '';
 $fakePassword = '**********';
+$loginType = 0;
 $lastUpdateTime = NULL;
 
 if (NULL != $row) {
@@ -46,7 +47,8 @@ if (NULL != $row) {
 	$username = $ploginConfig->username;
 	$currentPassword = $ploginConfig->password;
 
-	$lastUpdateTime = $row[2];
+	$loginType = $row[2];
+	$lastUpdateTime = $row[3];
 }
 
 // If form submitted, query values from the database.
@@ -78,15 +80,19 @@ if (isset($_POST['pin']) || isset($_POST['username'])) {
 
 	$userConfig = '{ "user": { "login": { "pin": "'.$pin.'", "tgt": "'.$tgt.'", "ctype": "'.$ctype.'", "uuid": "'.$uuid.'" }, "plogin": { "username": "'.$username.'", "password": "'.$password.'" } } }';
 
+	$loginType = (int)$_REQUEST['loginType'];
+
 	if ($configId) {
 		$sql = "UPDATE `configs`
-			SET `config` = '".$userConfig."', `updateTime` = CURRENT_TIMESTAMP
+			SET `config` = '".$userConfig."',
+				`loginType` = $loginType,
+				`updateTime` = CURRENT_TIMESTAMP
 			WHERE `id` = ".$configId;
 	} else {
 		$sql = "INSERT INTO `configs`
-			( `id`, `userId`, `config`, `createTime`, `updateTime` )
+			( `id`, `userId`, `config`, `loginType`, `createTime`, `updateTime` )
 			VALUES
-			( NULL, '$userId', '$userConfig', NULL, NULL);";
+			( NULL, $userId, '$userConfig', $loginType, NULL, NULL);";
 	}
 
 	$result = mysqli_query($con, $sql);
@@ -117,7 +123,14 @@ if ($insertFlag) {
 }
 ?>
 </p>
+<hr/>
 <form action="" method="post" name="login">
+  <p>Login type:</p>
+  <select type="select" name='loginType'>
+    <option value="0" <?php if (0 == $loginType) echo('selected');?> >Fixed configurations</option>
+    <option value="1" <?php if (1 == $loginType) echo('selected');?> >Username and password</option>
+  </select>
+  <p>Login with fixed configurations:</p>
   <input type="text" name="pin" value="<?php echo($pin);?>" placeholder="PIN" required />
   <input type="text" name="tgt" value="<?php echo($tgt);?>" placeholder="TGT" required />
   <select type="select" name='ctype'>
@@ -126,8 +139,10 @@ if ($insertFlag) {
   </select>
   <input type="text" name="uuid" value="<?php echo($uuid);?>" placeholder="UUID" required />
   <hr/>
+  <p>Login with username and password:</p>
   <input type="text" name="username" value="<?php echo($username);?>" placeholder="Username" required />
-  <input type="password" name="password" value="<?php echo($fakePassword);?>" placeholder="Password" required />
+  <input type="text" name="password" value="<?php echo($fakePassword);?>" placeholder="Password" required />
+  <hr/>
   <input name="submit" type="submit" value="Update" />
 </form>
 
