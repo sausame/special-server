@@ -4,16 +4,12 @@ include("auth.php"); //include auth.php file on all secure pages
 
 session_start();
 
-if (isset($_SESSION['userConfigFile'])) {
-	unlink($_SESSION['userConfigFile']);
-}
-
 if (isset($_SESSION['shareFile'])) {
 	unlink($_SESSION['shareFile']);
 }
 
 // Get user config
-$query = "SELECT config FROM `configs` WHERE userId = '$userId'";
+$query = "SELECT id FROM `configs` WHERE userId = '$userId'";
 $result = mysqli_query($con, $query) or die(mysql_error());
 $row = mysqli_fetch_row($result);
 
@@ -23,18 +19,7 @@ if (NULL == $row) {
 }
 
 $pathPrefix = tempnam(sys_get_temp_dir(), "viewer-$userId-");
-
-$userConfigFile = $pathPrefix . '-user-config.json';
 $shareFile = $pathPrefix . '-share.json';
-
-$fp = fopen($userConfigFile, 'wb');
-if (NULL == $fp) {
-	echo("Error to write user config.");
-	exit();
-}
-
-fwrite($fp, $row[0]);
-fclose($fp);
 
 $config = parse_ini_file('../../config.ini');
 $shareUrl = $config['viewer-share-url'];
@@ -42,7 +27,7 @@ $shareUrl = $config['viewer-share-url'];
 file_put_contents($shareFile, fopen($shareUrl, 'r'));
 
 $_SESSION['shareFile'] = $shareFile;
-$_SESSION['userConfigFile'] = $userConfigFile;
+$_SESSION['userId'] = $userId;
 
 $result = file_get_contents($shareFile);
 ?>

@@ -16,6 +16,8 @@ $appleFlag = '';
 $androidFlag = '';
 $uuid = '';
 $username = '';
+$currentPassword = '';
+$fakePassword = '**********';
 $lastUpdateTime = NULL;
 
 if (NULL != $row) {
@@ -42,6 +44,7 @@ if (NULL != $row) {
 
 	$ploginConfig = $userConfig->plogin;
 	$username = $ploginConfig->username;
+	$currentPassword = $ploginConfig->password;
 
 	$lastUpdateTime = $row[2];
 }
@@ -66,7 +69,12 @@ if (isset($_POST['pin']) || isset($_POST['username'])) {
 
 	$password = stripslashes($_REQUEST['password']);
 	$password = mysqli_real_escape_string($con, $password);
-	$password = md5($password);
+
+	if ($fakePassword == $password) {
+		$password = $currentPassword;
+	} else {
+		$password = base64_encode($password);
+	}
 
 	$userConfig = '{ "user": { "login": { "pin": "'.$pin.'", "tgt": "'.$tgt.'", "ctype": "'.$ctype.'", "uuid": "'.$uuid.'" }, "plogin": { "username": "'.$username.'", "password": "'.$password.'" } } }';
 
@@ -119,7 +127,7 @@ if ($insertFlag) {
   <input type="text" name="uuid" value="<?php echo($uuid);?>" placeholder="UUID" required />
   <hr/>
   <input type="text" name="username" value="<?php echo($username);?>" placeholder="Username" required />
-  <input type="password" name="password" value="Hello world!" placeholder="Password" required />
+  <input type="password" name="password" value="<?php echo($fakePassword);?>" placeholder="Password" required />
   <input name="submit" type="submit" value="Update" />
 </form>
 

@@ -5,14 +5,14 @@ do {
 
 	$result = NULL;
 
-	if (! isset($_SESSION['userConfigFile']) or ! isset($_SESSION['shareFile'])) {
+	if (! isset($_SESSION['userId']) or ! isset($_SESSION['shareFile'])) {
 		$code = 101;
 		$message = 'No login';
 		break;
 	}
 
+	$userId = $_SESSION['userId'];
 	$shareFile = $_SESSION['shareFile'];
-	$userConfigFile = $_SESSION['userConfigFile'];
 
 	if (! empty($_POST)) {
 		$index = $_POST['index'];
@@ -32,7 +32,7 @@ do {
 	$configFile = $config['viewer-config-path'];
 	$scriptFile = $config['viewer-script-path'];
 
-	$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $userConfigFile . ' ' . $shareFile . ' ' . $index . ' ' . $saveFile;
+	$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $userId . ' ' . $shareFile . ' ' . $index . ' ' . $saveFile;
 
 	$output = system($cmd, $retval);
 
