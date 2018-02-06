@@ -5,69 +5,40 @@ $insertFlag = false;
 $configId = NULL;
 $userConfig = NULL;
 
-$query = "SELECT id, config, loginType, updateTime FROM `configs` WHERE userId = '$userId'";
+$query = "SELECT id, config, entryCookies, updateTime FROM `configs` WHERE userId = '$userId'";
 $result = mysqli_query($con, $query) or die(mysql_error());
 $row = mysqli_fetch_row($result);
 
-$pin = '';
-$tgt = '';
-$ctype = '';
-$appleFlag = '';
-$androidFlag = '';
-$uuid = '';
 $username = '';
 $currentPassword = '';
 $fakePassword = '**********';
-$loginType = 0;
 $lastUpdateTime = NULL;
+
+$isEntryLoginNeeded = true;
 
 if (NULL != $row) {
 	$configId = $row[0];
 
 	$userConfig = json_decode($row[1]);
-	$userConfig = $userConfig->user;
 
 	$loginConfig = $userConfig->login;
 
-	$pin = $loginConfig->pin;
-	$tgt = $loginConfig->tgt;
-	$ctype = $loginConfig->ctype;
+	$username = $loginConfig->username;
+	$currentPassword = $loginConfig->password;
 
-	if ('apple' == $ctype) {
-		$appleFlag = 'selected';
-		$androidFlag = '';
-	} else {
-		$appleFlag = '';
-		$androidFlag = 'selected';
+	if (NULL != $row[2] or '' != $row[2]) {
+		$isEntryLoginNeeded = false;
 	}
+	echo($row[3].'<hr/>');
 
-	$uuid = $loginConfig->uuid;
-
-	$ploginConfig = $userConfig->plogin;
-	$username = $ploginConfig->username;
-	$currentPassword = $ploginConfig->password;
-
-	$loginType = $row[2];
 	$lastUpdateTime = $row[3];
 }
 
 // If form submitted, query values from the database.
-if (isset($_POST['pin']) || isset($_POST['username'])) {
+if (isset($_POST['username'])) {
 
-	$pin = stripslashes($_REQUEST['pin']); // removes backslashes
-	$pin = mysqli_real_escape_string($con, $pin); //escapes special characters in a string
-
-	$tgt = stripslashes($_REQUEST['tgt']);
-	$tgt = mysqli_real_escape_string($con, $tgt);
-
-	$ctype = stripslashes($_REQUEST['ctype']);
-	$ctype = mysqli_real_escape_string($con, $ctype);
-
-	$uuid = stripslashes($_REQUEST['uuid']);
-	$uuid = mysqli_real_escape_string($con, $uuid);
-
-	$username = stripslashes($_REQUEST['username']);
-	$username = mysqli_real_escape_string($con, $username);
+	$username = stripslashes($_REQUEST['username']); // removes backslashes
+	$username = mysqli_real_escape_string($con, $username); //escapes special characters in a string
 
 	$password = stripslashes($_REQUEST['password']);
 	$password = mysqli_real_escape_string($con, $password);
@@ -78,21 +49,18 @@ if (isset($_POST['pin']) || isset($_POST['username'])) {
 		$password = base64_encode($password);
 	}
 
-	$userConfig = '{ "user": { "login": { "pin": "'.$pin.'", "tgt": "'.$tgt.'", "ctype": "'.$ctype.'", "uuid": "'.$uuid.'" }, "plogin": { "username": "'.$username.'", "password": "'.$password.'" } } }';
-
-	$loginType = (int)$_REQUEST['loginType'];
+	$userConfig = '{ "login": { "username": "'.$username.'", "password": "'.$password.'" } }';
 
 	if ($configId) {
 		$sql = "UPDATE `configs`
 			SET `config` = '".$userConfig."',
-				`loginType` = $loginType,
 				`updateTime` = CURRENT_TIMESTAMP
 			WHERE `id` = ".$configId;
 	} else {
 		$sql = "INSERT INTO `configs`
-			( `id`, `userId`, `config`, `loginType`, `createTime`, `updateTime` )
+			( `id`, `userId`, `config`, `entryCookies`, `keyCookies`, `createTime`, `updateTime` )
 			VALUES
-			( NULL, $userId, '$userConfig', $loginType, NULL, NULL);";
+			( NULL, $userId, '$userConfig', NULL, NULL, NULL, NULL);";
 	}
 
 	$result = mysqli_query($con, $sql);
@@ -120,31 +88,25 @@ if ($insertFlag) {
 	echo('Configurations were updated at '.$lastUpdateTime);
 } else {
 	echo('New configurations');
+	$isEntryLoginNeeded = false;
 }
 ?>
 </p>
 <hr/>
 <form action="" method="post" name="login">
-  <p>Login type:</p>
-  <select type="select" name='loginType'>
-    <option value="0" <?php if (0 == $loginType) echo('selected');?> >Fixed configurations</option>
-    <option value="1" <?php if (1 == $loginType) echo('selected');?> >Username and password</option>
-  </select>
-  <p>Login with fixed configurations:</p>
-  <input type="text" name="pin" value="<?php echo($pin);?>" placeholder="PIN" required />
-  <input type="text" name="tgt" value="<?php echo($tgt);?>" placeholder="TGT" required />
-  <select type="select" name='ctype'>
-    <option value="android" <?php echo($androidFlag);?> >ANDROID</option>
-    <option value="apple" <?php echo($appleFlag);?> >APPLE</option>
-  </select>
-  <input type="text" name="uuid" value="<?php echo($uuid);?>" placeholder="UUID" required />
-  <hr/>
-  <p>Login with username and password:</p>
   <input type="text" name="username" value="<?php echo($username);?>" placeholder="Username" required />
   <input type="text" name="password" value="<?php echo($fakePassword);?>" placeholder="Password" required />
   <hr/>
   <input name="submit" type="submit" value="Update" />
 </form>
+
+<?php
+if ($isEntryLoginNeeded) {
+?>
+<p><a href="entry.php">Entry Login</a></p>
+<?php
+}
+?>
 
 <p><a href="index.php">Home</a></p>
 <a href="logout.php">Logout</a>

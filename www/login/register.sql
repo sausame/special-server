@@ -47,7 +47,6 @@ CREATE TABLE `configs` (
   `config` text,
   `entryCookies` text,
   `keyCookies` text,
-  `loginType` int(11) NOT NULL,
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
