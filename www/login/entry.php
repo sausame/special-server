@@ -5,8 +5,13 @@ include("auth.php"); //include auth.php file on all secure pages
 session_start();
 
 $pathPrefix = sys_get_temp_dir()."/entry-$userId";
+$screenshotFile = $pathPrefix . '-screenshot.jpeg';
 $inputFile = $pathPrefix . '-in.json';
 $outputFile = $pathPrefix . '-out.json';
+
+if (file_exists($screenshotFile)) {
+	unlink($screenshotFile);
+}
 
 if (file_exists($inputFile)) {
 	unlink($inputFile);
@@ -16,6 +21,7 @@ if (file_exists($outputFile)) {
 	unlink($outputFile);
 }
 
+$_SESSION['file'] = $screenshotFile;
 $_SESSION['inputFile'] = $inputFile;
 $_SESSION['outputFile'] = $outputFile;
 $_SESSION['userId'] = $userId;
@@ -25,7 +31,7 @@ $configFile = $config['login-config-path'];
 $entryConfigFile = $config['login-entry-config-path'];
 $envPath = $config['login-env-path'];
 
-$cmd = "export PATH=$envPath".':$PATH && '."/bin/bash $scriptFile $configFile $userId $inputFile $outputFile $entryConfigFile > /dev/null &";
+$cmd = "export PATH=$envPath".':$PATH && '."/bin/bash $scriptFile $configFile $userId $screenshotFile $inputFile $outputFile $entryConfigFile > /dev/null &";
 system($cmd);
 ?>
 <!DOCTYPE html>
@@ -37,6 +43,10 @@ system($cmd);
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <div style="min-width: 80%">
+    <div id="screenshotdiv"></div>
+  </div>
+  <hr>
   <div id="logindiv" style="min-width: 80%">正在登录，请稍候……</div>
   <script>
 
@@ -109,10 +119,6 @@ system($cmd);
                   content += '<p>' + data['message'] + '</p>';
                 }
 
-                if (data['message']) {
-                  content += '<p>' + data['message'] + '</p>';
-                }
-
                 if (data['image']) {
                   content += '<p><img src="data: png;base64,' + data['image'] + '"/></p>';
                 }
@@ -169,14 +175,37 @@ system($cmd);
       xhr.send();
     }
 
-    var timer = setInterval(getData, 10000);
+    function updateScreenshot() {
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.onload = function() {
+        if (200 === xhr.status) {
+          if ('' != xhr.responseText) {
+            var content = '<img src="data: jpeg;base64,' + xhr.responseText + '"/>';
+            document.getElementById('screenshotdiv').innerHTML = content;
+          }
+        }
+      };
+
+      xhr.open('GET', '../utils/rawfile.php', true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.send();
+    }
+
+    function update() {
+        updateScreenshot();
+        getData();
+    }
+
+    var timer = setInterval(update, 1000);
     var lastCode = 0;
 
     var curId = null;
     var lastId = null;
     var lastValue = null;
 
-    window.onload = getData();
+    window.onload = update();
 
   </script>
 </body>
