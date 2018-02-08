@@ -181,8 +181,9 @@ system($cmd);
 
       xhr.onload = function() {
         if (200 === xhr.status) {
-          if ('' != xhr.responseText) {
-            var content = '<img src="data: jpeg;base64,' + xhr.responseText + '"/>';
+          text = xhr.responseText.trim();
+          if ('' != text) {
+            var content = '<img src="data: jpeg;base64,' + text + '"/>';
             document.getElementById('screenshotdiv').innerHTML = content;
           }
         }
