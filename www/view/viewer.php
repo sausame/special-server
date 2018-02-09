@@ -4,10 +4,6 @@ include("auth.php"); //include auth.php file on all secure pages
 
 session_start();
 
-if (isset($_SESSION['shareFile'])) {
-	unlink($_SESSION['shareFile']);
-}
-
 // Get user config
 $query = "SELECT id FROM `configs` WHERE userId = '$userId'";
 $result = mysqli_query($con, $query) or die(mysql_error());
@@ -18,18 +14,38 @@ if (NULL == $row) {
 	exit();
 }
 
-$pathPrefix = tempnam(sys_get_temp_dir(), "viewer-$userId-");
-$shareFile = $pathPrefix . '-share.json';
+$pathPrefix = sys_get_temp_dir() . '/'. "viewer-share-$userId";
+$shareFile = $pathPrefix . '.json';
+$saveFile = $pathPrefix . '-result.json';
+
+$_SESSION['outputFile'] = $saveFile;
 
 $config = parse_ini_file('../../config.ini');
 $shareUrl = $config['viewer-share-url'];
+$configFile = $config['viewer-config-path'];
+$scriptFile = $config['viewer-script-path'];
 
 file_put_contents($shareFile, fopen($shareUrl, 'r'));
 
-$_SESSION['shareFile'] = $shareFile;
-$_SESSION['userId'] = $userId;
+$needed = true;
 
-$result = file_get_contents($shareFile);
+if (file_exists($saveFile)) {
+
+	$content = file_get_contents($shareFile);
+	$shareObj = json_decode($content);
+
+	$content = file_get_contents($saveFile);
+	$saveObj = json_decode($content);
+
+	if ($shareObj->startTime != $saveObj->startTime) {
+		$needed = false;
+	}
+}
+
+if ($needed) {
+	$cmd = "export PATH=$envPath".':$PATH && /bin/bash ' . "$scriptFile $configFile $userId $shareFile -1 $saveFile > /dev/null &";
+	system($cmd);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -128,27 +144,10 @@ $result = file_get_contents($shareFile);
 </head>
 <body>
   <!-- Swiper -->
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-<?php
-	$user = json_decode($result);
-	$num = $user->num;
-	for ($index = 0; $index < $num; $index ++) {
-		$divName = 'div' . $index;
-?>
-      <div class="swiper-slide">
-        <div id="<?php echo($divName); ?>" style="min-width: 80%">正在更新，请稍候……</div>
-      </div>
-<?php
-	}
-?>
+  <div id='container' class="swiper-container">
+    <div class="swiper-slide">
+      <div style="min-width: 80%">正在更新，请稍候……</div>
     </div>
-    <!-- Add Pagination -->
-    <div class="swiper-pagination"></div>
-    <!-- Add Arrows -->
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-
   </div>
 
   <!-- Swiper JS -->
@@ -158,18 +157,57 @@ $result = file_get_contents($shareFile);
   <!-- Initialize Swiper -->
   <script>
 
-    function getData(index) {
+    function getContent(index, data) {
 
-      switch(statuses[index]) {
-      case 0:
-        statuses[index] = 1; // Updating
-        console.log('' + index + ' is updating ...');
-        break;
-      case 1:
-      case 2:
-      default:
-        return;
+      var content = '<div class="swiper-slide"><div style="min-width: 80%">';
+
+      var plate = data['plate'];
+      var image = data['image'];
+
+      content += '<textarea id="bar' + index + '" class="plate-textarea" rows="12" readonly>' + plate + '</textarea>';
+      content += '<button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#bar' + index + '">复制文本</button>';
+      content += '<hr/>';
+      content += '<img src="' + image + '"/>';
+      content += '</div></div>';
+
+      return content;
+    }
+
+    function showContainer(data) {
+
+      var num = data['num'];
+      var startTime = data['startTime'];
+      var endTime = data['endTime'];
+      var dataList = data['list'];
+
+      var content = '<div class="swiper-wrapper">';
+
+      console.log('Get ' + num + ' items between ' + startTime + ' and ' + endTime);
+
+      for (var index = 0; index < dataList.length; index ++) {
+          content += getContent(index, dataList[index]);
       }
+
+      content += '</div>';
+      content += '<div class="swiper-pagination"></div>';
+      content += '<div class="swiper-button-next"></div>';
+      content += '<div class="swiper-button-prev"></div>';
+
+      document.getElementById('container').innerHTML = content;
+
+      swiper = new Swiper('.swiper-container', {
+        pagination: {
+          el: '.swiper-pagination',
+          type: 'fraction',
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+    }
+
+    function getData() {
 
       var xhr = new XMLHttpRequest();
 
@@ -177,46 +215,31 @@ $result = file_get_contents($shareFile);
 
         if (200 === xhr.status) {
 
-          statuses[index] = 2; // Updated
+          var text = xhr.responseText.trim();
 
-          console.log('' + index + ' is updated.');
+          if ('' != text) {
+            res = JSON.parse(text);
+            error = res['error'];
 
-          res = JSON.parse(xhr.responseText);
-          error = res['error'];
+            if (0 === error['code']) {
+              clearInterval(timer);
 
-          if (0 === error['code']) {
+              var data = res['data'];
+              showContainer(data);
 
-            var data = res['data'];
-            var plate = data['plate'];
-            var image = data['image'];
-
-            document.getElementById('div' + index).innerHTML = '<textarea id="bar' + index + '" class="plate-textarea" rows="12" readonly>' + plate + '</textarea>\n<button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#bar' + index + '">复制文本</button>\n<hr/>\n<img src="' + image + '"/>';
-
-          } else {
-            console.log(error);
+            } else {
+              console.log(error);
+            }
           }
         }
       };
 
-      xhr.open('POST', 'special.php', true);
+      xhr.open('GET', '../utils/fileoutput.php', true);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.send('index=' + index);
+      xhr.send();
     }
 
-    var swiper = new Swiper('.swiper-container', {
-      pagination: {
-        el: '.swiper-pagination',
-        type: 'fraction',
-      },
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-    });
-
-    swiper.on('slideChange', function () {
-      getData(swiper.realIndex);
-    });
+    var swiper = null;
 
     var clipboard = new Clipboard('.btn');
 
@@ -228,14 +251,9 @@ $result = file_get_contents($shareFile);
       console.log(e);
     });
 
-    var statuses = [];
-    var num = <?php echo($num); ?>;
-    for (i = 0; i < num; i ++) {
-      statuses[i] = 0; // Initialization
-    }
+    var timer = setInterval(getData, 3000);
 
-    window.onload = getData(0);
-
+    window.onload = getData();
   </script>
 </body>
 </html>
