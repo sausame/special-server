@@ -29,7 +29,6 @@ if (NULL != $row) {
 	if (NULL != $row[2] or '' != $row[2]) {
 		$isEntryLoginNeeded = false;
 	}
-	echo($row[3].'<hr/>');
 
 	$lastUpdateTime = $row[3];
 }
@@ -75,6 +74,7 @@ if (isset($_POST['username'])) {
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
 <title>Configurations</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
