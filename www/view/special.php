@@ -31,8 +31,9 @@ do {
 
 	$configFile = $config['viewer-config-path'];
 	$scriptFile = $config['viewer-script-path'];
+	$envPath = $config['login-env-path'];
 
-	$cmd = '/bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $userId . ' ' . $shareFile . ' ' . $index . ' ' . $saveFile;
+	$cmd = "export PATH=$envPath".':$PATH && /bin/bash ' . $scriptFile . ' ' . $configFile . ' ' . $userId . ' ' . $shareFile . ' ' . $index . ' ' . $saveFile;
 
 	$output = system($cmd, $retval);
 
