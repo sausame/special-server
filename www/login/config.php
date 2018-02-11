@@ -75,7 +75,7 @@ if (isset($_POST['username'])) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
-<title>Configurations</title>
+<title>配置</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -83,33 +83,34 @@ if (isset($_POST['username'])) {
 <p>
 <?php
 if ($insertFlag) {
-	echo('Configurations is saved.');
+	echo('配置已保存。');
 } else if ($lastUpdateTime) {
-	echo('Configurations were updated at '.$lastUpdateTime);
+	echo('上次修改配置的时间为：'.$lastUpdateTime);
 } else {
-	echo('New configurations');
+	echo('新配置');
 	$isEntryLoginNeeded = false;
 }
 ?>
 </p>
 <hr/>
+<h3>注意是京东系统的用户名和密码</h3>
 <form action="" method="post" name="login">
-  <input type="text" name="username" value="<?php echo($username);?>" placeholder="Username" required />
-  <input type="text" name="password" value="<?php echo($fakePassword);?>" placeholder="Password" required />
+  <input type="text" name="username" value="<?php echo($username);?>" placeholder="用户名" required />
+  <input type="text" name="password" value="<?php echo($fakePassword);?>" placeholder="密码" required />
   <hr/>
-  <input name="submit" type="submit" value="Update" />
+  <input name="submit" type="submit" value="更新配置" />
 </form>
 
 <?php
 if ($isEntryLoginNeeded) {
 ?>
-<p><a href="entry.php">Entry Login</a></p>
+<p><h2><a href="entry.php">京东系统登录</a></h2></p>
 <?php
 }
 ?>
 
-<p><a href="index.php">Home</a></p>
-<a href="logout.php">Logout</a>
+<p><a href="index.php">回到首页</a></p>
+<a href="logout.php">退出登录</a>
 
 </div>
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
-<title>Login</title>
+<title>登录</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -52,13 +52,13 @@
 	} else {
 ?>
 <div class="form">
-<h1>Log In</h1>
+<h1>登录</h1>
 <form action="" method="post" name="login">
-<input type="text" name="username" placeholder="Username" required />
-<input type="password" name="password" placeholder="Password" required />
-<input name="submit" type="submit" value="Login" />
+<input type="text" name="username" placeholder="用户名" required />
+<input type="password" name="password" placeholder="密码" required />
+<input name="submit" type="submit" value="登录" />
 </form>
-<p>Not registered yet? <a href='registration.php'>Register Here</a></p>
+<p>没有注册，请点击<a href='registration.php'>注册</a>。</p>
 
 </div>
 <?php } ?>

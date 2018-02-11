@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
-<title>Registration</title>
+<title>注册账号</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -22,17 +22,17 @@
         $query = "INSERT into `users` (username, password, email, trn_date) VALUES ('$username', '".md5($password)."', '$email', '$trn_date')";
         $result = mysqli_query($con,$query);
         if($result){
-            echo "<div class='form'><h3>You are registered successfully.</h3><br/>Click here to <a href='login.php'>Login</a></div>";
+            echo "<div class='form'><h3>您已经成功注册。</h3><br/>点击回到<a href='login.php'>首页</a>。</div>";
         }
     }else{
 ?>
 <div class="form">
-<h1>Registration</h1>
+<h1>注册账号</h1>
 <form name="registration" action="" method="post">
 <input type="email" name="email" placeholder="Email" required />
-<input type="text" name="username" placeholder="Username" required />
-<input type="password" name="password" placeholder="Password" required />
-<input type="submit" name="submit" value="Register" />
+<input type="text" name="username" placeholder="用户名" required />
+<input type="password" name="password" placeholder="密码" required />
+<input type="submit" name="submit" value="注册账号" />
 </form>
 </div>
 <?php } ?>

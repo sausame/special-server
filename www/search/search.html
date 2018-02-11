@@ -43,7 +43,7 @@
       top:1px;
     }
   </style>
-  <title>Search</title>
+  <title>搜索</title>
 </head>
 <body>
 
@@ -58,10 +58,27 @@
   -->
 
 <form id="explore" name="exploreForm" method="POST" action="explorer.php" >
-  <p>Please input sku id or content:</p>
-  <p><input type="text" name="key" class="placeholder" placeholder="#content#low-price#high-price#" size="50" /></p>
-  <p><input class="btn button-default" type="submit" value="Search" /></p>
+  <h2>请输入商品ID或搜索内容：</h2>
+  <p><input type="text" name="key" class="placeholder" placeholder="#关键字#最低价#最高价#" size="32" /></p>
+  <p><input class="btn button-default" type="submit" value="搜索" /></p>
 </form>
+
+<hr/>
+<h3>例子：搜索手机</h3>
+<pre>
+输入：手机
+输入：我要买手机
+输入：手机有券吗
+输入：手机有优惠吗
+</pre>
+<h3>或者搜索ID为12345678的商品</h3>
+<pre>
+输入：12345678
+</pre>
+<h3>或者搜索1000到2000元的手机</h3>
+<pre>
+输入：#手机#1000#2000#
+</pre>
 
 </body>
 </html>
