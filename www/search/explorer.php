@@ -100,8 +100,8 @@ if ($needed) {
     }
     .plate-textarea {
       border: 1px solid #cccccc;
-      padding: 5px;
-      min-width: 100%;
+      padding: 0px;
+      min-width: 90%;
       font-family: Tahoma, sans-serif;
       background-position: bottom right;
       background-repeat: no-repeat;
@@ -171,7 +171,6 @@ if ($needed) {
 
       content += '<textarea id="bar' + index + '" class="plate-textarea" rows="12" readonly>' + plate + '</textarea>';
       content += '<button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#bar' + index + '">复制文本</button>';
-      content += '<hr/>';
       content += '<img src="' + image + '"/>';
       content += '</div></div>';
 
@@ -197,8 +196,6 @@ if ($needed) {
 
       if (dataList.length > 1) {
         content += '<div class="swiper-pagination"></div>';
-        content += '<div class="swiper-button-next"></div>';
-        content += '<div class="swiper-button-prev"></div>';
       }
 
       document.getElementById('container').innerHTML = content;
@@ -207,11 +204,7 @@ if ($needed) {
         pagination: {
           el: '.swiper-pagination',
           type: 'fraction',
-        },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
+        }
       });
     }
 
