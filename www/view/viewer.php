@@ -35,12 +35,14 @@ if (file_exists($saveFile)) {
 	$content = file_get_contents($saveFile);
 	$saveObj = json_decode($content);
 
-	if ($shareObj->startTime != $saveObj->startTime) {
+	if (null != $saveObj->data && $shareObj->startTime == $saveObj->data->startTime) {
 		$needed = false;
 	}
 }
 
 if ($needed) {
+
+	unlink($saveFile);
 
 	$configFile = $config['viewer-config-path'];
 	$scriptFile = $config['viewer-script-path'];
