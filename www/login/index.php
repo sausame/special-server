@@ -17,6 +17,8 @@ include("auth.php"); //include auth.php file on all secure pages ?>
 <p><a href="config.php">Configurations</a></p>
 <p><a href="entry.php">Entry Login</a></p>
 <p><a href="../view/viewer.php">View</a></p>
+<p><a href="../search/search.html">Search</a></p>
+<br/>
 <a href="logout.php">Logout</a>
 
 </div>
