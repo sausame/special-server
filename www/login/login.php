@@ -56,6 +56,7 @@
 <form action="" method="post" name="login">
 <input type="text" name="username" placeholder="用户名" required />
 <input type="password" name="password" placeholder="密码" required />
+<br/>
 <input name="submit" type="submit" value="登录" />
 </form>
 <p>没有注册，请点击<a href='registration.php'>注册</a>。</p>
