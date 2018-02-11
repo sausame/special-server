@@ -22,8 +22,6 @@ $_SESSION['outputFile'] = $saveFile;
 
 $config = parse_ini_file('../../config.ini');
 $shareUrl = $config['viewer-share-url'];
-$configFile = $config['viewer-config-path'];
-$scriptFile = $config['viewer-script-path'];
 
 file_put_contents($shareFile, fopen($shareUrl, 'r'));
 
@@ -43,6 +41,11 @@ if (file_exists($saveFile)) {
 }
 
 if ($needed) {
+
+	$configFile = $config['viewer-config-path'];
+	$scriptFile = $config['viewer-script-path'];
+	$envPath = $config['login-env-path'];
+
 	$cmd = "export PATH=$envPath".':$PATH && /bin/bash ' . "$scriptFile $configFile $userId $shareFile -1 $saveFile > /dev/null &";
 	system($cmd);
 }
