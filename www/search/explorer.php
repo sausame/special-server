@@ -46,7 +46,9 @@ if ($needed) {
 	$scriptFile = $config['explorer-script-path'];
 	$envPath = $config['login-env-path'];
 
-	$cmd = "export PATH=$envPath".':$PATH && /bin/bash ' . "$scriptFile $configFile $userId \"$key\" $saveFile > /dev/null &";
+	$safeKey = base64_encode($key);
+
+	$cmd = "export PATH=$envPath".':$PATH && /bin/bash ' . "$scriptFile $configFile $userId \"$safeKey\" $saveFile > /dev/null &";
 	system($cmd);
 
 	$_SESSION['key'] = $key;
