@@ -26,7 +26,7 @@ if (NULL != $row) {
 	$username = $loginConfig->username;
 	$currentPassword = $loginConfig->password;
 
-	if (NULL != $row[2] or '' != $row[2]) {
+	if (NULL != $row[2] && '' != $row[2]) {
 		$isEntryLoginNeeded = false;
 	}
 
