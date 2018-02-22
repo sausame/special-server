@@ -149,7 +149,7 @@ system($cmd);
 
               var content = '<div>';
               content += '<p>登录成功！</p>';
-              content += '<p><a href="index.php">Home</a></p>';
+              content += '<p><a href="index.php">回到首页</a></p>';
               content += '</div>' ;
 
               document.getElementById('logindiv').innerHTML = content;
@@ -161,7 +161,7 @@ system($cmd);
 
               var content = '<div>';
               content += '<p>登录失败！(' + error['message'] + ')</p>';
-              content += '<p><a href="index.php">Home</a></p>';
+              content += '<p><a href="index.php">回到首页</a></p>';
               content += '</div>' ;
 
               document.getElementById('logindiv').innerHTML = content;
