@@ -46,7 +46,12 @@
 			setcookie('Key_your_site', $password, $hour, '/');
 			header("Location: index.php"); // Redirect user to index.php
 		} else {
-			echo "<div class='form'><h3>Username/password is incorrect.</h3><br/>Click here to <a href='login.php'>Login</a></div>";
+?>
+<div class="form">
+  <h3>用户名或密码错误！</h3>
+  <br/>请重新<a href="login.php" onclick="window.history.back(); return false;">登录</a>。
+</div>
+<?php
 		}
 
 	} else {
