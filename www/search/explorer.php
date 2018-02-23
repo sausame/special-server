@@ -8,6 +8,10 @@ if (! empty($_POST)) {
 	die('No key');
 }
 
+if ('' == $key) {
+	die('No key');
+}
+
 include("auth.php"); //include auth.php file on all secure pages
 
 session_start();
