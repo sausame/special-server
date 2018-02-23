@@ -59,8 +59,11 @@
 
 <form id="explore" name="exploreForm" method="POST" action="explorer.php" >
   <h2>请输入商品ID或搜索内容：</h2>
-  <p><input type="text" name="key" class="placeholder" placeholder="#关键字#最低价#最高价#" size="32" /></p>
-  <p><input class="btn button-default" type="submit" value="搜索" /></p>
+  <p><input type="text" id="key" name="key" class="placeholder" placeholder="#关键字#最低价#最高价#" size="32" /></p>
+  <p>
+    <input class="btn button-default" type="submit" value="搜索" onclick="search(false); return false;" />
+    <input class="btn button-default" type="submit" value="精准搜索" onclick="search(true); return false;" />
+  </p>
 </form>
 
 <hr/>
@@ -80,5 +83,30 @@
 输入：#手机#1000#2000#
 </pre>
 
+<script>
+
+  function search(isPrecise) {
+
+    var element = document.getElementById('key');
+
+    var value = element.value.trim();
+
+    if ('' == value) {
+      return;
+    }
+
+    var value = element.value.trim();
+
+    if (isPrecise && value.search('#') < 0) {
+      element.value = '#' + value + '#';
+    } else {
+      element.value = value;
+    }
+
+    var form = document.getElementById('explore');
+    form.submit();
+  }
+
+</script>
 </body>
 </html>
