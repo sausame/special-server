@@ -41,6 +41,16 @@ system($cmd);
   <title>京东系统登录</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .landscape {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
   <div style="min-width: 80%">
@@ -113,7 +123,7 @@ system($cmd);
                 console.log('ID #' + curId + ', Code #' + code);
                 lastCode = code;
 
-                var content = '<div>';
+                var content = '<div class="landscape">';
 
                 if (data['message']) {
                   content += '<p>' + data['message'] + '</p>';
