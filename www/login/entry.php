@@ -146,7 +146,7 @@ system($cmd);
                 }
 
                 content += '<p><input type="text" id="code" name="code" ' + promptMsg + ' ' + lengthMsg + ' required /></p>';
-                content += '<p><input id="sendbutton" name="submit" type="submit" value="Input" onclick="sendData()" /></p>';
+                content += '<p><input id="sendbutton" name="submit" type="submit" value="提交" onclick="sendData()" /></p>';
 
                 content += '</div>' ;
 
