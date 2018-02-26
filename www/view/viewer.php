@@ -75,6 +75,10 @@ if ($needed) {
       margin: 0;
       padding: 0;
     }
+    img {
+      max-height: 240px;
+      max-width: 240px;
+    }
     .swiper-container {
       width: 100%;
       height: 100%;
@@ -169,9 +173,9 @@ if ($needed) {
       var plate = data['plate'];
       var image = data['image'];
 
-      content += '<textarea id="bar' + index + '" class="plate-textarea" rows="12" readonly>' + plate + '</textarea>';
-      content += '<button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#bar' + index + '">复制文本</button>';
-      content += '<img src="' + image + '"/>';
+      content += '<p><textarea id="bar' + index + '" class="plate-textarea" rows="12" readonly>' + plate + '</textarea></p>';
+      content += '<p><button class="btn button-copy" data-clipboard-action="copy" data-clipboard-target="#bar' + index + '">复制文本</button></p>';
+      content += '<p><img src="' + image + '"/></p>';
       content += '</div></div>';
 
       return content;
