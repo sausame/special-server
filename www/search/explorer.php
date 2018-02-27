@@ -81,6 +81,10 @@ if ($needed) {
       margin: 0;
       padding: 0;
     }
+    img {
+      max-height: 240px;
+      max-width: 240px;
+    }
     .swiper-container {
       width: 100%;
       height: 100%;
