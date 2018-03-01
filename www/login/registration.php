@@ -21,9 +21,10 @@
 		$password = stripslashes($_REQUEST['password']);
 		$password = mysqli_real_escape_string($con,$password);
 
-		$trn_date = date("Y-m-d H:i:s");
-		$query = "INSERT into `users` (username, password, email, trn_date) VALUES ('$username', '".md5($password)."', '$email', '$trn_date')";
-		$result = mysqli_query($con,$query);
+		$password = password_hash($password, PASSWORD_DEFAULT);
+
+		$query = "INSERT into `users` (username, password, email, createTime, token, tokenUpdateTime) VALUES ('$username', '$password', '$email', NULL, NULL, NULL)";
+		$result = mysqli_query($con, $query);
 		if($result){
 			echo "<div class='form'><h3>您已经成功注册。</h3><br/>点击回到<a href='login.php'>首页</a>。</div>";
 		} else {

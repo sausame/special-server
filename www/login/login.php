@@ -33,17 +33,24 @@
 		$username = mysqli_real_escape_string($con,$username); //escapes special characters in a string
 		$password = stripslashes($_REQUEST['password']);
 		$password = mysqli_real_escape_string($con,$password);
-		$password = md5($password);
 
 		// Checking is user existing in the database or not
-		$query = "SELECT * FROM `users` WHERE username = '$username' and password = '$password'";
+		$query = "SELECT password FROM `users` WHERE username = '$username'";
 		$result = mysqli_query($con,$query) or die(mysql_error());
 		$rows = mysqli_num_rows($result);
 
+		$found = false;
+
 		if ($rows == 1) {
+			$row = mysqli_fetch_row($result);
+			$hash = $row[0];
+			$found = password_verify($password, $hash);
+		}
+
+		if ($found) {
 			$hour = time() + (7 * 24 * 3600); // A week
 			setcookie('ID_your_site', $username, $hour, '/');
-			setcookie('Key_your_site', $password, $hour, '/');
+			setcookie('Key_your_site', $hash, $hour, '/');
 			header("Location: index.php"); // Redirect user to index.php
 		} else {
 ?>
