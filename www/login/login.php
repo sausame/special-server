@@ -65,6 +65,7 @@
 <input name="submit" type="submit" value="登录" />
 </form>
 <p>没有注册，请点击<a href='registration.php'>注册</a>。</p>
+<p>忘记密码，请点击<a href='resetpw.php'>重置密码</a>。</p>
 
 </div>
 <?php } ?>
