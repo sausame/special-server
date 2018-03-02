@@ -19,6 +19,12 @@
 		$result = mysqli_query($con, $query) or die(mysql_error());
 		$rows = mysqli_num_rows($result);
 		if(0 == $rows) {
+			$past = time() - 1800;
+
+			//this makes the time in the past to destroy the cookie
+			setcookie('ID_your_site', gone, $past, '/');
+			setcookie('Key_your_site', gone, $past, '/');
+
 			header("Location: login.php");
 			exit();
 		}
