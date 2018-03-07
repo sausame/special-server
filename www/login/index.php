@@ -6,13 +6,13 @@ $query = "SELECT config, entryCookies FROM `configs` WHERE userId = '$userId'";
 $result = mysqli_query($con, $query) or die(mysql_error());
 $row = mysqli_fetch_row($result);
 
-$isConfigExisted = true;
+$isConfigExisted = false;
 $isEntryLoginNeeded = true;
 
 if (NULL != $row) {
 
-	if (NULL == $row[0] || '' == $row[0]) {
-		$isConfigExisted = false;
+	if (NULL != $row[0] && '' != $row[0]) {
+		$isConfigExisted = true;
 	}
 
 	if (NULL != $row[1] && '' != $row[1]) {
