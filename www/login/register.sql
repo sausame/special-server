@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE `configs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
-  `config` text,
+  `config` text CHARACTER SET utf8,
   `entryCookies` text,
   `keyCookies` text,
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
