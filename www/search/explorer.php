@@ -161,7 +161,7 @@ if ($needed) {
   <!-- Swiper -->
   <div id='container' class="swiper-container">
     <div class="swiper-slide">
-      <div style="min-width: 80%">正在搜索“<?php echo($key); ?>”，请稍候……</div>
+      <div id='message' style="min-width: 80%">正在搜索“<?php echo($key); ?>”，请稍候……</div>
     </div>
   </div>
 
@@ -218,6 +218,11 @@ if ($needed) {
       });
     }
 
+    function onError(code, message) {
+      var content = '没有搜索到和“' + key + '”有关的商品，请换个关键字试试。(错误码：' + code + ')';
+      document.getElementById('message').innerHTML = content;
+    }
+
     function getData() {
 
       var xhr = new XMLHttpRequest();
@@ -229,17 +234,20 @@ if ($needed) {
           var text = xhr.responseText.trim();
 
           if ('' != text) {
+
+            clearInterval(timer);
+
             res = JSON.parse(text);
             error = res['error'];
 
             if (0 === error['code']) {
-              clearInterval(timer);
 
               var data = res['data'];
               showContainer(data);
 
             } else {
               console.log(error);
+              onError(error['code'], error['message']);
             }
           }
         }
@@ -263,6 +271,7 @@ if ($needed) {
     });
 
     var timer = setInterval(getData, 3000);
+    var key = "<?php echo($key); ?>";
 
     window.onload = getData();
   </script>
